@@ -48,7 +48,7 @@ function appendItem(item) {
     let newEl = document.createElement("li")
     newEl.textContent = `${itemVal[0]} - Quantity: ${itemVal[1]}`
 
-    newEl.addEventListener("click", function(){
+    newEl.addEventListener("dblclick", function(){
         let exactLocationInDb = ref(database, `itemsList/${itemID}`)
         remove(exactLocationInDb)
     })
