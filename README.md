@@ -1,4 +1,4 @@
-# Grab N Go - Revolutionizing Grocery Shopping 🛒
+# GrabNGo - Revolutionizing Grocery Shopping 🛒
 
 ## **🛍️ Your Shopping, Simplified:**
 
