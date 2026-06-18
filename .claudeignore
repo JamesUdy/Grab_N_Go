@@ -1,0 +1,43 @@
+# --- Dependencies & build output ---
+node_modules/
+dist/
+.vite/
+
+# --- Version control ---
+.git/
+
+# --- OS / Editor ---
+.DS_Store
+**/.DS_Store
+*.swp
+*.swo
+
+# --- Environment & Secrets ---
+*.env
+*.local
+*.secret
+*.pem
+*.key
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Lockfiles (saves tokens — use package.json for dep info) ---
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# --- Binary / Media ---
+*.webp
+*.png
+*.jpg
+*.jpeg
+*.ico
+*.pdf
+*.zip
+*.tar.gz
+
+# --- Temp ---
+tmp/
+temp/
