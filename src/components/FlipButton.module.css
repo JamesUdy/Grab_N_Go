@@ -1,0 +1,55 @@
+.btn {
+  position: relative;
+  width: 130px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  -webkit-perspective: 230px;
+  perspective: 230px;
+  /* offset matches original: right: 25px */
+  margin-right: -25px;
+}
+
+.btn span {
+  background: linear-gradient(0deg, #e30f32ff 0%, #e30f32ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow:
+    inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+    7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+    4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  -webkit-transform-origin: 50% 50% -20px;
+  transform-origin: 50% 50% -20px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.btn span:nth-child(1) {
+  -webkit-transform: rotateX(90deg);
+  transform: rotateX(90deg);
+}
+
+.btn span:nth-child(2) {
+  -webkit-transform: rotateX(0deg);
+  transform: rotateX(0deg);
+}
+
+.btn:hover span:nth-child(1) {
+  -webkit-transform: rotateX(0deg);
+  transform: rotateX(0deg);
+}
+
+.btn:hover span:nth-child(2) {
+  color: transparent;
+  -webkit-transform: rotateX(-90deg);
+  transform: rotateX(-90deg);
+}
