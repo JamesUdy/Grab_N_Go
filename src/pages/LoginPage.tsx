@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
+import { ThemeToggle } from '../components/ThemeToggle'
 import shoppy from '../assets/shoppy.webp'
 
 export default function LoginPage() {
@@ -21,7 +22,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[--color-bg] px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[--color-bg] px-4 relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       {/* #region hero */}
       <img
         src={shoppy}
