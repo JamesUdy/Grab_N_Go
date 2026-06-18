@@ -1,44 +1,106 @@
-# GrabNGo - Revolutionizing Grocery Shopping 🛒
+# GrabNGo
 
-### **🛍️ Your Shopping, Simplified:**
+A collaborative grocery list app — fast, synced, and always in your pocket.
 
-Welcome to **Grab N Go**, the responsive grocery list website designed to make your shopping a breeze. This project blends the art of HTML, the finesse of CSS, and the magic of JavaScript to craft an interface that streamlines your grocery management.
+Live demo: **https://grab-n-go.netlify.app/**
 
-## **🌐 One-Stop Shopping Solution:**
+---
 
-From managing your list to real-time updates, **Grab N Go** is your virtual shopping companion:
+## What it does
 
-- **Seamless Responsiveness:** Experience the same convenience across devices with our thoughtful responsive design.
-- **Live List Updates:** Embrace the future with real-time data storage powered by Firebase. Your list stays current, always.
-- **Shopping, Simplified:** Our intuitive interface allows you to effortlessly add and remove items, ensuring a smooth grocery journey.
-- **Data Security:** Firebase Authentication guarantees that your list remains for your eyes only.
+- Add grocery items with quantities; the list syncs across all open tabs and devices in real time
+- Double-click any item to remove it
+- Sign in with Google — your list is private to your account
+- Multiple named lists with a shared-list collaboration mode
+- Built-in analytics (most-added items, shopping frequency)
+- Three colour themes: Noir, Light, Dark — persisted across sessions
+- Installable as a PWA (works offline for reads)
 
-## **🛒 Technology Ensemble:**
+---
 
-- HTML
-- CSS
-- JavaScript
-- Firebase (Real-time Database)
+## Tech stack
 
-## **💻 Embrace the Experience:**
+| Concern | Technology |
+|---|---|
+| Framework | React 19 + Vite 8 |
+| Language | TypeScript 6 |
+| Styling | Tailwind CSS v4 (Vite plugin) |
+| Database | Firebase Realtime Database v11 |
+| Auth | Firebase Authentication (Google OAuth) |
+| Hosting | Netlify |
+| Linting | ESLint 10 + typescript-eslint |
+| Formatting | Prettier 3 |
 
-1. **Visit the Demo:** Explore the [Grab N Go demo](https://grab-n-go.netlify.app/).
-2. **Start Shopping:** Add grocery items to your list seamlessly.
-3. **Effortless Deletion:** To remove an item, simply double-click it.
+---
 
-## **🔗 Integration Magic:**
+## Running locally
 
-- **Firebase Enchantment:** Our real-time grocery magic is powered by Firebase. Experience the future of data synchronization.
-- **Secure Shopping:** Firebase Authentication ensures your data's safety, allowing only authorized access.
+```bash
+npm install
+npm run dev        # Vite dev server → http://localhost:5173
+npm run build      # tsc + vite build → dist/
+npm run preview    # Preview the production build
+npm run lint       # ESLint
+npm run format     # Prettier write
+```
 
-To integrate Firebase into your own projects, consult the [Firebase Documentation](https://firebase.google.com/docs).
+---
 
-## **🔒 Data Security:**
+## Project structure
 
-Your data's safety is our priority. With Firebase Authentication, your grocery list is shielded, and only you can modify it.
+```
+src/
+├── App.tsx                   # Root — route layout
+├── main.tsx                  # React entry point
+├── index.css                 # Tailwind v4 + theme tokens + global styles
+├── assets/
+│   └── noir.png              # Mascot (noir detective with receipt)
+├── auth/
+│   ├── AuthContext.tsx        # Firebase auth state provider
+│   ├── RequireAuth.tsx        # Route guard
+│   └── useAuth.ts            # Auth hook
+├── components/
+│   ├── AddItemForm.tsx        # Name + quantity form
+│   ├── ItemCard.tsx           # Single list item (dblclick removes)
+│   ├── ItemList.tsx           # List renderer + empty state
+│   ├── ThemeToggle.tsx        # Cycle between themes
+│   └── UpdateToast.tsx        # PWA update prompt
+├── hooks/
+│   └── useItems.ts            # Firebase onValue subscription + CRUD
+├── lib/
+│   └── firebase.ts            # Firebase app init + db export
+├── pages/
+│   ├── LoginPage.tsx          # Auth landing (animated)
+│   ├── ListsOverviewPage.tsx  # All lists dashboard
+│   ├── ListPage.tsx           # Single list view
+│   ├── AnalyticsPage.tsx      # Usage analytics
+│   ├── SettingsPage.tsx       # Theme + account settings
+│   ├── ThemeChooserPage.tsx   # First-time theme picker
+│   └── NotFoundPage.tsx       # 404
+└── theme/
+    ├── ThemeContext.tsx        # Theme provider
+    └── useTheme.ts            # Theme hook
+```
 
-## **📞 Let's Connect:**
+---
 
-Designed and brought to life by [UDHAYA PRAKASH M](https://udhay-prakash-portfolio.vercel.app/).
+## How the data layer works
 
-Stay connected on [LinkedIn](https://www.linkedin.com/in/udhaya-prakash-m-835b83226/) | Follow the journey on [GitHub](https://github.com/JamesUdy)
+1. `useItems` subscribes to `itemsList/` in Firebase via `onValue` — React state updates on every remote change.
+2. `addItem(name, qty)` calls `push(itemsRef, [name, qty])` — Firebase assigns the key.
+3. `removeItem(id)` calls `remove(ref(db, \`itemsList/\${id}\`))`.
+4. Firebase Auth restricts reads/writes to the signed-in user's data.
+
+---
+
+## Firebase config
+
+Database URL is set in `src/lib/firebase.ts`:
+
+```
+https://grabngo-339fa-default-rtdb.asia-southeast1.firebasedatabase.app/
+```
+
+---
+
+Built by [Udhaya Prakash M](https://udhay-prakash-portfolio.vercel.app/) — [LinkedIn](https://www.linkedin.com/in/udhaya-prakash-m-835b83226/) · [GitHub](https://github.com/JamesUdy)
