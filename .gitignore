@@ -38,3 +38,6 @@ Thumbs.db
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Internal docs
+docs/
