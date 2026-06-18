@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6[1m]",
+  "enableContextCaching": true,
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Project structure hint: GrabNGo is a React 19 + Vite + TypeScript + Tailwind v4 app. Source lives in src/ (App.tsx, components/, hooks/, lib/). Firebase config: src/lib/firebase.ts. Custom hook: src/hooks/useItems.ts. Ask for specific files rather than exploring broadly.'"
+          }
+        ]
+      }
+    ]
+  }
+}
