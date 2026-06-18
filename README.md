@@ -1,6 +1,6 @@
 # GrabNGo - Revolutionizing Grocery Shopping 🛒
 
-## **🛍️ Your Shopping, Simplified:**
+### **🛍️ Your Shopping, Simplified:**
 
 Welcome to **Grab N Go**, the responsive grocery list website designed to make your shopping a breeze. This project blends the art of HTML, the finesse of CSS, and the magic of JavaScript to craft an interface that streamlines your grocery management.
 
