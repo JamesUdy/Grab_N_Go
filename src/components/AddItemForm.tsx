@@ -1,44 +1,84 @@
-import { useRef } from 'react'
-import styles from './FlipButton.module.css'
+import { useRef, useState } from 'react'
+import { CATEGORIES } from '../lib/types'
+import type { Category } from '../lib/types'
 
 interface Props {
-  onAdd: (name: string, quantity: string) => void
+  onAdd: (name: string, quantity: number, category: Category) => Promise<void>
 }
 
 export default function AddItemForm({ onAdd }: Props) {
   const nameRef = useRef<HTMLInputElement>(null)
-  const quantRef = useRef<HTMLInputElement>(null)
+  const [quantity, setQuantity] = useState(1)
+  const [category, setCategory] = useState<Category>('Other')
+  const [busy, setBusy] = useState(false)
 
-  function handleClick() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
     const name = nameRef.current?.value.trim() ?? ''
-    const quantity = quantRef.current?.value.trim() ?? ''
     if (!name) return
-    onAdd(name, quantity)
+    setBusy(true)
+    await onAdd(name, quantity, category)
+    setBusy(false)
     if (nameRef.current) nameRef.current.value = ''
-    if (quantRef.current) quantRef.current.value = ''
+    setQuantity(1)
+    setCategory('Other')
+    nameRef.current?.focus()
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <div className="flex flex-row items-center justify-center gap-2">
-        <input
-          ref={nameRef}
-          type="text"
-          placeholder="Add Items"
-          className="bg-[#5c5f6566] border-2 border-[#5c5f6566] rounded-[0.24rem] px-2 py-[0.56rem] text-center text-base text-[#3a3b3cdf] w-40 shadow-[0px_1px_4px_rgb(0,0,0)] outline-[#5c5f65d8] hover:font-bold"
-        />
-        <input
-          ref={quantRef}
-          type="text"
-          placeholder="Quantity"
-          className="bg-[#5c5f6566] border-2 border-[#5c5f6566] rounded-[0.24rem] px-2 py-[0.56rem] text-center text-base text-[#3a3b3cdf] w-40 shadow-[0px_1px_4px_rgb(0,0,0)] outline-[#5c5f65d8] hover:font-bold"
-        />
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end w-full"
+    >
+      <input
+        ref={nameRef}
+        type="text"
+        placeholder="Item name"
+        maxLength={80}
+        required
+        className="flex-1 min-w-0 px-4 py-2.5 rounded-xl border border-[--color-border] bg-[--color-surface] text-[--color-ink] placeholder-[--color-ink]/40 outline-none focus:border-[--color-accent] transition-colors"
+      />
+
+      {/* quantity stepper */}
+      <div className="flex items-center gap-1 rounded-xl border border-[--color-border] bg-[--color-surface] overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+          className="px-3 py-2.5 text-[--color-ink]/60 hover:text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors font-bold text-lg leading-none"
+        >
+          −
+        </button>
+        <span className="w-8 text-center text-sm font-semibold text-[--color-ink] select-none">
+          {quantity}
+        </span>
+        <button
+          type="button"
+          onClick={() => setQuantity((q) => q + 1)}
+          className="px-3 py-2.5 text-[--color-ink]/60 hover:text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors font-bold text-lg leading-none"
+        >
+          +
+        </button>
       </div>
 
-      <button className={styles.btn} onClick={handleClick}>
-        <span>Item Added</span>
-        <span>Grab It</span>
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value as Category)}
+        className="px-3 py-2.5 rounded-xl border border-[--color-border] bg-[--color-surface] text-[--color-ink] outline-none focus:border-[--color-accent] transition-colors text-sm"
+      >
+        {CATEGORIES.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </select>
+
+      <button
+        type="submit"
+        disabled={busy}
+        className="px-6 py-2.5 rounded-xl font-bold text-sm bg-[--color-accent] text-white hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 whitespace-nowrap"
+      >
+        {busy ? 'Adding…' : 'Add item'}
       </button>
-    </div>
+    </form>
   )
 }
