@@ -7,9 +7,12 @@ import ListPage from './pages/ListPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import SettingsPage from './pages/SettingsPage'
 import NotFoundPage from './pages/NotFoundPage'
+import { UpdateToast } from './components/UpdateToast'
 
 export default function App() {
   return (
+    <>
+    <UpdateToast />
     <Routes>
       {/* public */}
       <Route path="/login" element={<LoginPage />} />
@@ -60,5 +63,6 @@ export default function App() {
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
+    </>
   )
 }

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { CATEGORIES } from '../lib/types'
 import type { Category } from '../lib/types'
+import { fireComicPop } from './comicPopStore'
 
 interface Props {
   onAdd: (name: string, quantity: number, category: Category) => Promise<void>
@@ -8,6 +9,7 @@ interface Props {
 
 export default function AddItemForm({ onAdd }: Props) {
   const nameRef = useRef<HTMLInputElement>(null)
+  const submitBtnRef = useRef<HTMLButtonElement>(null)
   const [quantity, setQuantity] = useState(1)
   const [category, setCategory] = useState<Category>('Other')
   const [busy, setBusy] = useState(false)
@@ -18,6 +20,7 @@ export default function AddItemForm({ onAdd }: Props) {
     if (!name) return
     setBusy(true)
     await onAdd(name, quantity, category)
+    fireComicPop('POW!', submitBtnRef.current)
     setBusy(false)
     if (nameRef.current) nameRef.current.value = ''
     setQuantity(1)
@@ -73,6 +76,7 @@ export default function AddItemForm({ onAdd }: Props) {
       </select>
 
       <button
+        ref={submitBtnRef}
         type="submit"
         disabled={busy}
         className="px-6 py-2.5 rounded-xl font-bold text-sm bg-[--color-accent] text-white hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 whitespace-nowrap"

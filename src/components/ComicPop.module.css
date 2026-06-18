@@ -1,0 +1,187 @@
+/* ComicPop — CSS-only burst animation, reduced-motion aware */
+
+@keyframes comic-pop-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(-8deg);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15) rotate(4deg);
+  }
+  65% {
+    transform: translate(-50%, -50%) scale(0.95) rotate(-2deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05) rotate(1deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes comic-rays {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.6) rotate(20deg);
+  }
+}
+
+.anchor {
+  position: relative;
+  display: contents;
+}
+
+.pop {
+  position: fixed;
+  left: var(--pop-x, 50%);
+  top: var(--pop-y, 50%);
+  transform: translate(-50%, -50%) scale(0.4);
+  pointer-events: none;
+  z-index: 9999;
+  user-select: none;
+  white-space: nowrap;
+
+  /* burst rays behind text */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -16px;
+    background: radial-gradient(
+      circle,
+      var(--pop-color, var(--color-accent)) 0%,
+      transparent 60%
+    ),
+    conic-gradient(
+      from 0deg,
+      transparent 10deg,
+      var(--pop-color, var(--color-accent)) 14deg,
+      transparent 18deg,
+      transparent 28deg,
+      var(--pop-color, var(--color-accent)) 32deg,
+      transparent 36deg,
+      transparent 46deg,
+      var(--pop-color, var(--color-accent)) 50deg,
+      transparent 54deg,
+      transparent 64deg,
+      var(--pop-color, var(--color-accent)) 68deg,
+      transparent 72deg,
+      transparent 82deg,
+      var(--pop-color, var(--color-accent)) 86deg,
+      transparent 90deg,
+      transparent 100deg,
+      var(--pop-color, var(--color-accent)) 104deg,
+      transparent 108deg,
+      transparent 118deg,
+      var(--pop-color, var(--color-accent)) 122deg,
+      transparent 126deg,
+      transparent 136deg,
+      var(--pop-color, var(--color-accent)) 140deg,
+      transparent 144deg,
+      transparent 154deg,
+      var(--pop-color, var(--color-accent)) 158deg,
+      transparent 162deg,
+      transparent 172deg,
+      var(--pop-color, var(--color-accent)) 176deg,
+      transparent 180deg,
+      transparent 190deg,
+      var(--pop-color, var(--color-accent)) 194deg,
+      transparent 198deg,
+      transparent 208deg,
+      var(--pop-color, var(--color-accent)) 212deg,
+      transparent 216deg,
+      transparent 226deg,
+      var(--pop-color, var(--color-accent)) 230deg,
+      transparent 234deg,
+      transparent 244deg,
+      var(--pop-color, var(--color-accent)) 248deg,
+      transparent 252deg,
+      transparent 262deg,
+      var(--pop-color, var(--color-accent)) 266deg,
+      transparent 270deg,
+      transparent 280deg,
+      var(--pop-color, var(--color-accent)) 284deg,
+      transparent 288deg,
+      transparent 298deg,
+      var(--pop-color, var(--color-accent)) 302deg,
+      transparent 306deg,
+      transparent 316deg,
+      var(--pop-color, var(--color-accent)) 320deg,
+      transparent 324deg,
+      transparent 334deg,
+      var(--pop-color, var(--color-accent)) 338deg,
+      transparent 342deg,
+      transparent 352deg,
+      var(--pop-color, var(--color-accent)) 356deg,
+      transparent 360deg
+    );
+    border-radius: 50%;
+    opacity: 0;
+    animation: comic-rays 650ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+}
+
+.label {
+  position: relative;
+  display: inline-block;
+  font-family: 'Arial Black', 'Impact', sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: white;
+  text-shadow:
+    -2px -2px 0 var(--pop-shadow, #000),
+    2px -2px 0 var(--pop-shadow, #000),
+    -2px 2px 0 var(--pop-shadow, #000),
+    2px 2px 0 var(--pop-shadow, #000),
+    0 0 12px var(--pop-color, var(--color-accent));
+  background: var(--pop-color, var(--color-accent));
+  padding: 0.25em 0.5em;
+  border-radius: 4px;
+  border: 2.5px solid var(--pop-shadow, #000);
+  transform: rotate(-4deg);
+  animation: comic-pop-in 700ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* theme-specific colours */
+:root[data-theme='noir'] .label,
+[data-theme='noir'] .label {
+  --pop-color: #ff3c6e;
+  --pop-shadow: #000;
+}
+
+:root[data-theme='color-light'] .label,
+[data-theme='color-light'] .label {
+  --pop-color: #e63950;
+  --pop-shadow: #1a1a1a;
+}
+
+:root[data-theme='color-dark'] .label,
+[data-theme='color-dark'] .label {
+  --pop-color: #f7b731;
+  --pop-shadow: #1b1f3b;
+}
+
+/* honour prefers-reduced-motion — fade only, no bounce */
+@media (prefers-reduced-motion: reduce) {
+  .label {
+    animation-duration: 300ms;
+    animation-name: none;
+    opacity: 0;
+  }
+
+  .pop::before {
+    animation: none;
+  }
+}

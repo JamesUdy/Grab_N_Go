@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import type { ItemDoc } from '../lib/types'
+import { fireComicPop } from './comicPopStore'
 
 interface Props {
   item: ItemDoc
@@ -8,6 +10,13 @@ interface Props {
 }
 
 export default function ItemCard({ item, onToggle, onSetQuantity, onRemove }: Props) {
+  const checkBtnRef = useRef<HTMLButtonElement>(null)
+
+  function handleToggle() {
+    if (!item.checked) fireComicPop('THWIP!', checkBtnRef.current)
+    onToggle(item)
+  }
+
   return (
     <li
       className={`
@@ -20,7 +29,8 @@ export default function ItemCard({ item, onToggle, onSetQuantity, onRemove }: Pr
     >
       {/* check toggle */}
       <button
-        onClick={() => onToggle(item)}
+        ref={checkBtnRef}
+        onClick={handleToggle}
         aria-label={item.checked ? 'Uncheck item' : 'Check item'}
         className={`
           shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center

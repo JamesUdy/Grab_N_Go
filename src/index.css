@@ -9,6 +9,7 @@
   --color-accent: #ff3c6e;
   --color-accent2: #00d4ff;
   --color-border: rgba(240, 240, 240, 0.12);
+  --color-danger: #ff4d4d;
 }
 
 [data-theme="color-light"] {
@@ -18,6 +19,7 @@
   --color-accent: #e63950;
   --color-accent2: #0077cc;
   --color-border: rgba(26, 26, 26, 0.12);
+  --color-danger: #d93025;
 }
 
 [data-theme="color-dark"] {
@@ -27,6 +29,7 @@
   --color-accent: #f7b731;
   --color-accent2: #45e0a8;
   --color-border: rgba(238, 240, 255, 0.12);
+  --color-danger: #ff6b6b;
 }
 /* #endregion */
 
@@ -38,5 +41,47 @@ body {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+}
+/* #endregion */
+
+/* #region halftone */
+/* radial dot-screen overlay — noir only, fades in color modes */
+.halftone {
+  position: relative;
+}
+.halftone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, var(--color-ink) 1px, transparent 1px);
+  background-size: 6px 6px;
+  opacity: 0.04;
+  border-radius: inherit;
+}
+[data-theme='noir'] .halftone::after {
+  opacity: 0.07;
+}
+/* #endregion */
+
+/* #region glass */
+.glass {
+  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid var(--color-border);
+}
+/* #endregion */
+
+/* #region reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 /* #endregion */
