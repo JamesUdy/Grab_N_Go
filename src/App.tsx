@@ -1,28 +1,64 @@
-import { useItems } from './hooks/useItems'
-import AddItemForm from './components/AddItemForm'
-import ItemList from './components/ItemList'
-import shoppy from './assets/shoppy.webp'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { RequireAuth } from './auth/RequireAuth'
+import LoginPage from './pages/LoginPage'
+import ThemeChooserPage from './pages/ThemeChooserPage'
+import ListsOverviewPage from './pages/ListsOverviewPage'
+import ListPage from './pages/ListPage'
+import AnalyticsPage from './pages/AnalyticsPage'
+import SettingsPage from './pages/SettingsPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
-  const { items, addItem, removeItem } = useItems()
-
   return (
-    <div className="min-h-screen bg-[#d8e2dc] select-none">
-      <h1 className="text-center mb-0 font-black text-[#ffb4a2] [WebkitTextStroke:0.096rem_#ff0a54] pt-4 text-4xl">
-        Grab &nbsp; N &nbsp; Go
-      </h1>
+    <Routes>
+      {/* public */}
+      <Route path="/login" element={<LoginPage />} />
 
-      <div className="flex flex-col items-center max-w-[104rem] mx-auto">
-        <img
-          src={shoppy}
-          alt="Shopping bag mascot"
-          className="block mx-auto mt-[0.8rem] w-auto max-w-[24rem]"
-        />
+      {/* protected */}
+      <Route
+        path="/welcome"
+        element={
+          <RequireAuth>
+            <ThemeChooserPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <RequireAuth>
+            <ListsOverviewPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/list/:listId"
+        element={
+          <RequireAuth>
+            <ListPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <RequireAuth>
+            <AnalyticsPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <RequireAuth>
+            <SettingsPage />
+          </RequireAuth>
+        }
+      />
 
-        <AddItemForm onAdd={addItem} />
-
-        <ItemList items={items} onRemove={removeItem} />
-      </div>
-    </div>
+      {/* fallbacks */}
+      <Route path="/404" element={<NotFoundPage />} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
+    </Routes>
   )
 }
