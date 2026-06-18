@@ -187,7 +187,7 @@ export default function LoginPage() {
             "
           >
             <GoogleIcon />
-            Sign in with Google
+            Show me the list, detective
           </button>
 
           {/* receipt tear marks */}
