@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import { ThemeToggle } from '../components/ThemeToggle'
-import shoppy from '../assets/shoppy.webp'
+import shoppy from '../assets/noir.png'
 
 export default function LoginPage() {
   const { user, loading, signInWithGoogle } = useAuth()
