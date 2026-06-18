@@ -2,6 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- anti-FOUC: apply saved theme before first paint -->
+    <script>
+      ;(function () {
+        var t = localStorage.getItem('gng-theme')
+        if (t === 'color-light' || t === 'color-dark' || t === 'noir') {
+          document.documentElement.setAttribute('data-theme', t)
+        }
+      })()
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GrabNGo</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
