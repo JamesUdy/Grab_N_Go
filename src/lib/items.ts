@@ -93,3 +93,19 @@ export function subscribeToItems(
     onError,
   )
 }
+
+export function subscribeToHistory(
+  listId: string,
+  onChange: (events: HistoryEvent[]) => void,
+  onError: (err: Error) => void,
+): Unsubscribe {
+  const q = query(historyRef(listId), orderBy('checkedAt', 'asc'))
+  return onSnapshot(
+    q,
+    (snap) => {
+      const events = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as HistoryEvent)
+      onChange(events)
+    },
+    onError,
+  )
+}

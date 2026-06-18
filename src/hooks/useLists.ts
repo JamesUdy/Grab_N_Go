@@ -5,6 +5,9 @@ import {
   createList as libCreateList,
   renameList as libRenameList,
   deleteList as libDeleteList,
+  generateShareCode as libGenerateShareCode,
+  joinByShareCode as libJoinByShareCode,
+  removeCollaborator as libRemoveCollaborator,
 } from '../lib/lists'
 import type { ListDoc } from '../lib/types'
 
@@ -53,5 +56,21 @@ export function useLists() {
     await libDeleteList(listId)
   }, [])
 
-  return { lists, loading, error, createList, renameList, deleteList }
+  const generateShareCode = useCallback(async (listId: string) => {
+    return libGenerateShareCode(listId)
+  }, [])
+
+  const joinList = useCallback(
+    async (code: string) => {
+      if (!user) return
+      await libJoinByShareCode(code, user.uid, user.displayName, user.photoURL)
+    },
+    [user],
+  )
+
+  const removeCollaborator = useCallback(async (listId: string, uid: string) => {
+    await libRemoveCollaborator(listId, uid)
+  }, [])
+
+  return { lists, loading, error, createList, renameList, deleteList, generateShareCode, joinList, removeCollaborator }
 }

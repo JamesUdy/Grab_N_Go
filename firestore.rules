@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── users ──────────────────────────────────────────────
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ── lists ──────────────────────────────────────────────
+    match /lists/{listId} {
+      function isMember() {
+        return request.auth != null
+          && request.auth.uid in resource.data.memberUids;
+      }
+
+      function isOwner() {
+        return request.auth != null
+          && resource.data.ownerUid == request.auth.uid;
+      }
+
+      // Valid share-code redemption: authenticated user adding only themselves
+      // to memberUids and members map on a list that has a matching shareCode.
+      function isValidRedemption() {
+        let uid = request.auth.uid;
+        let incoming = request.resource.data;
+        let existing = resource.data;
+
+        // shareCode must exist and match what the client sent
+        let codeMatch = existing.shareCode != null
+          && incoming.shareCode == existing.shareCode;
+
+        // memberUids diff must be exactly [uid]
+        let uidsAdded = incoming.memberUids.toSet().difference(existing.memberUids.toSet());
+        let uidsOnlyMe = uidsAdded.size() == 1 && uid in uidsAdded;
+
+        // No other fields change except memberUids, members, updatedAt
+        let onlyAllowedFields = incoming.diff(existing).affectedKeys()
+          .hasOnly(['memberUids', 'members', 'updatedAt']);
+
+        return codeMatch && uidsOnlyMe && onlyAllowedFields;
+      }
+
+      allow read: if isMember();
+
+      // Owner can do anything; members can update (add items triggers updatedAt).
+      // Non-members can redeem a share code to add themselves.
+      allow update: if isMember()
+        || (request.auth != null && isValidRedemption());
+
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.ownerUid;
+
+      allow delete: if isOwner();
+
+      // ── items ─────────────────────────────────────────────
+      match /items/{itemId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/lists/$(listId)).data.memberUids;
+      }
+
+      // ── history ───────────────────────────────────────────
+      match /history/{eventId} {
+        allow read: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/lists/$(listId)).data.memberUids;
+        // history is append-only; no update/delete
+        allow create: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/lists/$(listId)).data.memberUids;
+      }
+    }
+  }
+}
