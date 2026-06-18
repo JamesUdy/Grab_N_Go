@@ -1,24 +1,10 @@
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
 import type { User } from 'firebase/auth'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, googleProvider, db } from '../lib/firebase'
-
-// #region Context shape
-
-interface AuthContextValue {
-  user: User | null
-  loading: boolean
-  signInWithGoogle: () => Promise<void>
-  signOut: () => Promise<void>
-}
-
-export const AuthContext = createContext<AuthContextValue | null>(null)
-
-// #endregion
-
-// #region Provider
+import { AuthContext } from './AuthContext'
 
 interface Props {
   children: ReactNode
@@ -40,7 +26,7 @@ export function AuthProvider({ children }: Props) {
     const result = await signInWithPopup(auth, googleProvider)
     const { uid, displayName, email, photoURL } = result.user
 
-    // lazy-create user profile doc on first sign-in (merge so it's idempotent)
+    // lazy-create user profile doc; merge makes it idempotent
     await setDoc(
       doc(db, 'users', uid),
       { displayName, email, photoURL, createdAt: serverTimestamp() },
@@ -58,5 +44,3 @@ export function AuthProvider({ children }: Props) {
     </AuthContext.Provider>
   )
 }
-
-// #endregion

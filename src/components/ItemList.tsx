@@ -1,4 +1,4 @@
-import { GroceryItem } from '../hooks/useItems'
+import type { GroceryItem } from '../hooks/useItems'
 import ItemCard from './ItemCard'
 
 interface Props {
