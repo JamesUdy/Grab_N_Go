@@ -2,7 +2,7 @@
 
 A collaborative grocery list app — fast, synced, and always in your pocket.
 
-Live demo: **https://grab-n-go.netlify.app/**
+Live demo: **https://grab-n-go.udy.me**
 
 ---
 
