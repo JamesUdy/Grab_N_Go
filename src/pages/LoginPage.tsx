@@ -22,6 +22,9 @@ const ORBIT_ITEMS = [
   { emoji: '🍎', radius: 104, duration: 10, delay: -5 },
 ]
 
+// "Grab N Go" split into individually animated spans
+const TITLE_CHARS = ['G', 'r', 'a', 'b', ' ', 'N', ' ', 'G', 'o']
+
 export default function LoginPage() {
   const { user, loading, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
@@ -30,7 +33,6 @@ export default function LoginPage() {
   const ghostRefs = useRef<(HTMLDivElement | null)[]>([])
   const rafRef = useRef<number | null>(null)
 
-  // typewriter state
   const [displayed, setDisplayed] = useState('')
   const [tagIndex, setTagIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -39,8 +41,11 @@ export default function LoginPage() {
     if (!loading && user) navigate('/', { replace: true })
   }, [user, loading, navigate])
 
-  // parallax mouse tracking
+  // parallax — only runs where hover is meaningful (pointer device)
   useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
+    if (!mq.matches) return
+
     function onMove(e: MouseEvent) {
       mousePos.current = { x: e.clientX, y: e.clientY }
     }
@@ -103,51 +108,53 @@ export default function LoginPage() {
       ref={containerRef}
       className="min-h-screen flex flex-col items-center justify-center bg-[--color-bg] px-4 relative overflow-hidden"
     >
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <ThemeToggle />
       </div>
 
-      {/* #region parallax ghost cards */}
-      {GHOST_CARDS.map((card, i) => (
-        <div
-          key={i}
-          ref={(el) => { ghostRefs.current[i] = el }}
-          className="absolute pointer-events-none select-none z-0"
-          style={{
-            transform: `translate(${card.x}px, ${card.y}px) rotate(${card.rotate}deg)`,
-            willChange: 'transform',
-          }}
-        >
+      {/* #region parallax ghost cards — hidden on mobile (fixed px offsets would overflow) */}
+      <div className="hidden sm:block">
+        {GHOST_CARDS.map((card, i) => (
           <div
-            className="glass rounded-xl px-5 py-4 flex flex-col gap-2"
-            style={{ opacity: 0.18, filter: 'blur(1.5px)', minWidth: 140 }}
+            key={i}
+            ref={(el) => { ghostRefs.current[i] = el }}
+            className="absolute pointer-events-none select-none z-0"
+            style={{
+              transform: `translate(${card.x}px, ${card.y}px) rotate(${card.rotate}deg)`,
+              willChange: 'transform',
+            }}
           >
-            {card.items.map((item) => (
-              <span key={item} className="text-[--color-ink] text-sm font-medium">{item}</span>
-            ))}
+            <div
+              className="glass rounded-xl px-5 py-4 flex flex-col gap-2"
+              style={{ opacity: 0.18, filter: 'blur(1.5px)', minWidth: 140 }}
+            >
+              {card.items.map((item) => (
+                <span key={item} className="text-[--color-ink] text-sm font-medium">{item}</span>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       {/* #endregion */}
 
       {/* #region receipt card unfurl */}
       <div className="receipt-unfurl relative z-10 w-full max-w-sm">
         <div
-          className="glass halftone rounded-2xl px-8 py-10 flex flex-col items-center text-center shadow-2xl"
+          className="glass halftone rounded-2xl px-5 py-8 sm:px-8 sm:py-10 flex flex-col items-center text-center shadow-2xl"
           style={{ borderTop: '3px dashed var(--color-border)' }}
         >
           {/* #region orbiting items */}
-          <div className="relative mb-6" style={{ width: 128, height: 128 }}>
+          <div className="relative mb-5 sm:mb-6" style={{ width: 112, height: 112 }}>
             <img
               src={shoppy}
               alt="GrabNGo mascot"
-              className="w-32 h-32 drop-shadow-lg select-none relative z-10"
+              className="w-28 h-28 sm:w-32 sm:h-32 drop-shadow-lg select-none relative z-10"
               style={{ borderRadius: '50%' }}
             />
             {ORBIT_ITEMS.map((o, i) => (
               <span
                 key={i}
-                className="absolute text-xl select-none pointer-events-none"
+                className="absolute text-lg sm:text-xl select-none pointer-events-none"
                 style={{
                   top: '50%',
                   left: '50%',
@@ -165,12 +172,27 @@ export default function LoginPage() {
           </div>
           {/* #endregion */}
 
-          <h1 className="text-4xl sm:text-5xl font-black text-[--color-ink] mb-3 tracking-tight">
-            Grab&nbsp;N&nbsp;Go
+          {/* #region animated title */}
+          <h1
+            className="font-black text-[--color-ink] mb-3 tracking-tight leading-none select-none"
+            style={{ fontSize: 'clamp(2rem, 8vw, 3rem)' }}
+            aria-label="Grab N Go"
+          >
+            {TITLE_CHARS.map((ch, i) => (
+              <span
+                key={i}
+                className="title-letter inline-block"
+                style={{ animationDelay: `${i * 0.07}s` }}
+                aria-hidden="true"
+              >
+                {ch}
+              </span>
+            ))}
           </h1>
+          {/* #endregion */}
 
           {/* #region typewriter */}
-          <p className="text-[--color-ink]/60 text-base mb-8 h-6 flex items-center justify-center gap-0.5">
+          <p className="text-[--color-ink]/60 text-sm sm:text-base mb-7 sm:mb-8 h-5 sm:h-6 flex items-center justify-center gap-0.5">
             <span>{displayed}</span>
             <span className="typewriter-cursor">|</span>
           </p>
@@ -180,7 +202,8 @@ export default function LoginPage() {
             onClick={handleSignIn}
             disabled={loading}
             className="
-              flex items-center gap-3 px-6 py-3 rounded-xl font-semibold text-base
+              flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-2.5 sm:py-3
+              rounded-xl font-semibold text-sm sm:text-base
               bg-[--color-surface] text-[--color-ink] border-2 border-[--color-ink]/20
               shadow-md hover:shadow-lg hover:border-[--color-accent]/60 active:scale-95
               transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed
@@ -191,9 +214,9 @@ export default function LoginPage() {
           </button>
 
           {/* receipt tear marks */}
-          <div className="flex gap-3 mt-8 opacity-20" aria-hidden="true">
+          <div className="flex gap-2 sm:gap-3 mt-6 sm:mt-8 opacity-20" aria-hidden="true">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="w-2 h-1 rounded-full bg-[--color-ink]" />
+              <div key={i} className="w-1.5 sm:w-2 h-1 rounded-full bg-[--color-ink]" />
             ))}
           </div>
         </div>
@@ -218,7 +241,40 @@ export default function LoginPage() {
           animation: receiptDrop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
-        /* orbit keyframes — each item orbits at its own radius via transformOrigin */
+        /* title — each letter drops in and bounces, then idles with a slow float wave */
+        @keyframes letterDrop {
+          0%   { opacity: 0; transform: translateY(-28px) scale(0.7) rotate(-6deg); }
+          60%  { opacity: 1; transform: translateY(4px)   scale(1.08) rotate(1deg); }
+          80%  { transform: translateY(-2px) scale(0.97) rotate(-0.5deg); }
+          100% { opacity: 1; transform: translateY(0)    scale(1)    rotate(0deg); }
+        }
+        @keyframes letterFloat {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(-5px); }
+        }
+        .title-letter {
+          opacity: 0;
+          animation:
+            letterDrop  0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+            letterFloat 3.2s  ease-in-out infinite;
+          /* float starts after drop finishes; stagger via delay on the element itself */
+          animation-delay: var(--drop-delay, 0s), calc(var(--drop-delay, 0s) + 0.55s + 0.4s);
+        }
+        /* override the animation-delay shorthand per letter using data we set inline */
+        .title-letter:nth-child(1)  { --drop-delay: 0s;    animation-delay: 0s,    0.95s; }
+        .title-letter:nth-child(2)  { --drop-delay: 0.07s; animation-delay: 0.07s, 1.02s; }
+        .title-letter:nth-child(3)  { --drop-delay: 0.14s; animation-delay: 0.14s, 1.09s; }
+        .title-letter:nth-child(4)  { --drop-delay: 0.21s; animation-delay: 0.21s, 1.16s; }
+        .title-letter:nth-child(5)  { --drop-delay: 0.28s; animation-delay: 0.28s, 1.23s; }
+        .title-letter:nth-child(6)  { --drop-delay: 0.35s; animation-delay: 0.35s, 1.30s; }
+        .title-letter:nth-child(7)  { --drop-delay: 0.42s; animation-delay: 0.42s, 1.37s; }
+        .title-letter:nth-child(8)  { --drop-delay: 0.49s; animation-delay: 0.49s, 1.44s; }
+        .title-letter:nth-child(9)  { --drop-delay: 0.56s; animation-delay: 0.56s, 1.51s; }
+        /* float phase offset — letters wave at different phases so it ripples */
+        .title-letter:nth-child(odd)  { animation-duration: 0.55s, 3.2s; }
+        .title-letter:nth-child(even) { animation-duration: 0.55s, 3.8s; }
+
+        /* orbit keyframes */
         @keyframes orbit-0 {
           from { transform: rotate(0deg)   translateX(90px)  rotate(0deg); }
           to   { transform: rotate(360deg) translateX(90px)  rotate(-360deg); }
