@@ -144,12 +144,11 @@ export default function LoginPage() {
           style={{ borderTop: '3px dashed var(--color-border)' }}
         >
           {/* #region orbiting items */}
-          <div className="relative mb-5 sm:mb-6" style={{ width: 112, height: 112 }}>
+          <div className="relative mb-5 sm:mb-6" style={{ width: 112, height: 140 }}>
             <img
               src={shoppy}
               alt="GrabNGo mascot"
-              className="w-28 h-28 sm:w-32 sm:h-32 drop-shadow-lg select-none relative z-10"
-              style={{ borderRadius: '50%' }}
+              className="w-28 sm:w-32 drop-shadow-lg select-none relative z-10 object-contain"
             />
             {ORBIT_ITEMS.map((o, i) => (
               <span
